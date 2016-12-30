@@ -10,12 +10,15 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
+const _U = require('underscore');
+const MongoStore = require('connect-mongo')(session);
 
 const debug = require('debug')('sw-time-sheet:app');
 
-const index = require('./routes/index');
-
 const app = express();
+
+// mongoose
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/sw_time_sheet');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,7 +35,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: cookieSecret,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    //cookie: {secure: true},
+    store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
 
 app.use(passport.initialize());
@@ -41,6 +46,7 @@ app.use(passport.session());
 
 app.use((req, res, next) => {
     res.locals.title = 'SW Time Sheet';
+    res.locals.user = _U.isUndefined(req.user) ? null : req.user;
     next();
 });
 
@@ -50,12 +56,16 @@ passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
-// mongoose
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/sw_time_sheet');
+//
 
-//app.use(require('connect-ensure-login').ensureLoggedIn());
+let routes = {};
 
-app.use('/', index);
+routes.index = require('./routes/index');
+routes.app = require('./routes/app');
+
+app.use('/', routes.index);
+app.use(require('connect-ensure-login').ensureLoggedIn());
+app.use('/app', routes.app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

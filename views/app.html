@@ -1,0 +1,18 @@
+<p>Today is {{dateTime}}</p>
+
+{{#timeIn}}
+
+<p>Your Shift started at {{timeIn}}</p>
+<form action="/app/endShift" method="post">
+    <input class="button-primary" type="submit" value="End">
+</form>
+
+<form action="/app/startBreak" method="post">
+    <input class="button-primary" type="submit" value="Break">
+</form>
+{{/timeIn}}
+{{^timeIn}}
+<form action="/app/startShift" method="post">
+    <input class="button-primary" type="submit" value="Start">
+</form>
+{{/timeIn}}

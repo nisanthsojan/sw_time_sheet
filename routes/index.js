@@ -5,11 +5,11 @@ const router = express.Router();
 
 
 router.get('/', function (req, res, next) {
-    res.render('index', {user: req.user});
+    res.render('index');
 });
 
 router.get('/register', function (req, res) {
-    res.render('register', {});
+    res.render('register');
 });
 
 router.post('/register', function(req, res) {
@@ -34,7 +34,7 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
-    res.redirect('/');
+    res.redirect('/app');
 });
 
 router.get('/logout', function(req, res) {
