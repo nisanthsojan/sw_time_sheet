@@ -51,7 +51,7 @@ passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
 // mongoose
-mongoose.connect(process.env.DBURL || 'mongodb://localhost:27017/sw_time_sheet');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/sw_time_sheet');
 
 //app.use(require('connect-ensure-login').ensureLoggedIn());
 
