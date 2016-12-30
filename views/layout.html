@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }}</title>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+
+    <link rel='stylesheet' href='/stylesheets/normalize.css'/>
+    <link rel='stylesheet' href='/stylesheets/skeleton.css'/>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container">
+        <div class="row">
+            <div class="two columns">
+                <h2>SW</h2>
+            </div>
+            <div class="offset-by-one nine columns">
+                <ul class="navbar-list">
+                    {{#user}}
+                    <li class="navbar-item"><a class="navbar-link" href="/logout">Logout</a></li>
+                    {{/user}}
+                    {{^user}}
+                    <li class="navbar-item"><a class="navbar-link" href="/login">Login</a></li>
+                    <li class="navbar-item"><a class="navbar-link" href="/register">Register</a></li>
+                    {{/user}}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+{{{yield}}}
+</body>
+</html>

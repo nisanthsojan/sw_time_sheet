@@ -1,0 +1,21 @@
+<div class="container">
+
+    <h4 class="section-heading">Register</h4>
+    {{#errorMessage}}
+    <p class="messages error">{{errorMessage}}</p>
+    {{/errorMessage}}
+    <form method="post" action="/register">
+        <label for="emailInput">Your email</label>
+        <input class="u-full-width" type="email" placeholder="test@mailbox.com" id="emailInput" name="username">
+
+        <label for="passwordInput">Your password</label>
+        <input class="u-full-width" type="password" id="passwordInput" name="password">
+
+        <label for="password2Input">Repeat password</label>
+        <input class="u-full-width" type="password" id="password2Input" name="password2">
+
+        <input class="button-primary" type="submit" value="Register">
+
+    </form>
+
+</div>
