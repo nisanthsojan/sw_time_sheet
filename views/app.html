@@ -1,15 +1,31 @@
-<p>Today is {{dateTime}}</p>
+<p>Time now {{dateTime}}</p>
 
 {{#timeIn}}
 
-<p>Your Shift started at {{timeIn}}</p>
-<form action="/app/endShift" method="post">
-    <input class="button-primary" type="submit" value="End">
-</form>
+<div class="row">
+    <div class="six columns">
+        <p>Your Shift started at <b>{{timeIn}}</b></p>
+    </div>
+    <div class="offset-by-one five columns">
+        <p>Hours worked <b>{{workedHours}}</b></p>
+    </div>
+</div>
 
-<form action="/app/startBreak" method="post">
-    <input class="button-primary" type="submit" value="Break">
-</form>
+<div class="row">
+    <div class="five columns">
+        <form action="/app/endShift" method="post">
+            <input class="button-primary" type="submit" value="End">
+        </form>
+    </div>
+    <div class="offset-by-one five columns">
+        <form action="/app/startBreak" method="post">
+            <input class="button-primary" type="submit" value="Break Start">
+        </form>
+    </div>
+</div>
+
+
+
 {{/timeIn}}
 {{^timeIn}}
 <form action="/app/startShift" method="post">

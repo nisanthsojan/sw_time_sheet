@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 const _U = require('underscore');
 const ObjectId = require('mongoose').Types.ObjectId;
 
+const debug = require('debug')('sw-time-sheet:models:time_sheet');
+
 
 let TimeSheetSchema = new Schema({
     userId: Schema.Types.ObjectId,
@@ -12,9 +14,18 @@ let TimeSheetSchema = new Schema({
     breakEnd: [{type: Date}],
 });
 
-let TimeSheet = mongoose.model('time_sheets', TimeSheetSchema);
+TimeSheetSchema.methods.endShift = function (timeOut, cb) {
+    if (!_U.isDate(timeOut)) {
+        return cb('invalid timeOut');
+    }
 
-TimeSheet.startShift = (params, cb) => {
+    this.timeOut = timeOut;
+    this.save();
+
+    return cb(null, this);
+};
+
+TimeSheetSchema.statics.startShift = function (params, cb) {
     if (!_U.isObject(params) || !_U.has(params, 'userId') || !_U.has(params, 'timeIn')) {
         return cb('no parameters');
     }
@@ -27,17 +38,11 @@ TimeSheet.startShift = (params, cb) => {
         return cb('invalid timeIn');
     }
 
-    let newTime = new TimeSheet({userId: params.userId, timeIn: params.timeIn});
-    newTime.save(function (err) {
-        // we've saved the dog into the db here
-        if (err) {
-            return cb('unable to save');
-        }
-
-        return cb(null, newTime);
-    });
+    let newTime = new this();
+    newTime.userId = params.userId;
+    newTime.timeIn = params.timeIn;
+    newTime.save(cb);
 };
 
 
-
-module.exports = TimeSheet;
+module.exports = mongoose.model('TimeSheet', TimeSheetSchema);

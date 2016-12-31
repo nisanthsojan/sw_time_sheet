@@ -7,27 +7,66 @@ const _U = require('underscore');
 const moment = require('moment');
 
 router.get('/', function (req, res, next) {
-    res.locals.dateTime = moment().format('MMMM Do YYYY, h:mm:ss a');
-    res.locals.timeIn = _U.isUndefined(req.session.timeIn) ? null : moment(req.session.timeIn).format('MMMM Do YYYY, h:mm:ss a');
+    let timeNow = moment();
+    res.locals.dateTime = timeNow.format('MMMM Do YYYY, HH:mm:ss');
+    if (!_U.isUndefined(req.session.TimeSheet) && !_U.isNull(req.session.TimeSheet)) {
+        let timeIn = moment(req.session.timeIn);
+        res.locals.timeIn = timeIn.format('MMMM Do YYYY, HH:mm:ss');
+        res.locals.workedHours = timeNow.diff(timeIn, 'hours')
+    }
+
+    debug('req.session.TimeSheet', req.session.TimeSheet);
+
     //debug('usr',req.user);
     res.render('app');
 });
 
 router.post('/startShift', function (req, res, next) {
-    res.locals.dateTime = new Date();
-
-    req.session.timeIn = new Date();
 
     TimeSheet.startShift({
         userId: req.user._id,
-        timeIn: req.session.timeIn
-    }, function (err, account) {
+        timeIn: new Date()
+    }, function (err, ts) {
         if (err) {
-            return res.render('app', {account: account});
+            return res.redirect('/app');
         }
 
+        req.session.TimeSheet = ts;
         res.redirect('/app');
     });
+
+});
+
+router.post('/endShift', function (req, res, next) {
+
+    if (_U.isUndefined(req.session.TimeSheet)) {
+        return res.redirect('/app');
+    }
+
+    TimeSheet.findById(req.session.TimeSheet._id, function (err, ts) {
+        if (err) {
+            return res.redirect('/app');
+        }
+
+        ts.timeOut = new Date();
+        ts.save(function (err) {
+            if (err) {
+                return res.redirect('/app');
+            }
+            req.session.TimeSheet = null;
+            delete req.session.TimeSheet;
+            res.redirect('/app');
+        });
+
+
+    });
+
+});
+
+
+router.post('/startBreak', function (req, res, next) {
+
+
 
 });
 
