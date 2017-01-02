@@ -9,15 +9,53 @@ const moment = require('moment');
 router.get('/', function (req, res, next) {
     let timeNow = moment();
     res.locals.dateTime = timeNow.format('MMMM Do YYYY, HH:mm:ss');
-    if (!_U.isUndefined(req.session.TimeSheet) && !_U.isNull(req.session.TimeSheet)) {
-        let timeIn = moment(req.session.timeIn);
-        res.locals.timeIn = timeIn.format('MMMM Do YYYY, HH:mm:ss');
-        res.locals.workedHours = timeNow.diff(timeIn, 'hours')
+
+    if (!_U.isUndefined(req.session.BreakStarted)) {
+        res.locals.breakStarted = req.session.BreakStarted;
     }
 
-    debug('req.session.TimeSheet', req.session.TimeSheet);
+    if (!_U.isUndefined(req.session.TimeSheet) && !_U.isNull(req.session.TimeSheet)) {
+
+        let ts = req.session.TimeSheet;
+
+        let timeIn = moment(ts.timeIn);
+        res.locals.timeIn = timeIn.format('MMMM Do YYYY, HH:mm:ss');
+
+        if (!_U.isEmpty(ts.breakStart)) {
+
+            if (!_U.isEmpty(ts.breakEnd)) {
+
+                res.locals.workedHours = timeNow.diff(timeIn, 'minutes');
+
+                let maxLength = ts.breakStart.length;
+                let breakHours = 0;
+
+                if (!_U.isUndefined(req.session.BreakStarted)) {
+                    maxLength = ts.breakEnd.length;
+                    res.locals.workedHours = moment(_U.last(ts.breakStart)).diff(timeIn, 'minutes');
+                }
+
+                for (let i = 0; i < maxLength; i++) {
+                    breakHours += moment(ts.breakEnd[i]).diff(moment(ts.breakStart[i]), 'minutes');
+                }
+
+                res.locals.workedHours -= breakHours;
+
+            } else {
+                res.locals.workedHours = moment(_U.first(ts.breakStart)).diff(timeIn, 'minutes');
+            }
+
+        } else {
+            res.locals.workedHours = timeNow.diff(timeIn, 'minutes');
+        }
+    }
+
+    //debug('req.session.TimeSheet', req.session.TimeSheet);
 
     //debug('usr',req.user);
+
+
+    res.locals.workedHours = (res.locals.workedHours / 60); // converting minutes to hours
     res.render('app');
 });
 
@@ -37,11 +75,14 @@ router.post('/startShift', function (req, res, next) {
 
 });
 
-router.post('/endShift', function (req, res, next) {
-
+function checkTimeSheet(req, res, next) {
     if (_U.isUndefined(req.session.TimeSheet)) {
         return res.redirect('/app');
     }
+    next();
+}
+
+router.post('/endShift', checkTimeSheet, function (req, res, next) {
 
     TimeSheet.findById(req.session.TimeSheet._id, function (err, ts) {
         if (err) {
@@ -64,9 +105,49 @@ router.post('/endShift', function (req, res, next) {
 });
 
 
-router.post('/startBreak', function (req, res, next) {
+router.post('/startBreak', checkTimeSheet, function (req, res, next) {
+
+    TimeSheet.findById(req.session.TimeSheet._id, function (err, ts) {
+        if (err) {
+            return res.redirect('/app');
+        }
+
+        ts.breakStart.push(new Date());
+
+        ts.save(function (err) {
+            if (err) {
+                return res.redirect('/app');
+            }
+            req.session.TimeSheet = ts;
+            req.session.BreakStarted = true;
+            res.redirect('/app');
+        });
 
 
+    });
+
+});
+
+router.post('/endBreak', checkTimeSheet, function (req, res, next) {
+
+    TimeSheet.findById(req.session.TimeSheet._id, function (err, ts) {
+        if (err) {
+            return res.redirect('/app');
+        }
+
+        ts.breakEnd.push(new Date());
+
+        ts.save(function (err) {
+            if (err) {
+                return res.redirect('/app');
+            }
+            req.session.TimeSheet = ts;
+            req.session.BreakStarted = false;
+            res.redirect('/app');
+        });
+
+
+    });
 
 });
 

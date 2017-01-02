@@ -11,10 +11,16 @@
     </div>
 </div>
 
+{{#breakStarted}}
+<form action="/app/endBreak" method="post">
+    <input class="button-primary" type="submit" value="Break End">
+</form>
+{{/breakStarted}}
+{{^breakStarted}}
 <div class="row">
     <div class="five columns">
         <form action="/app/endShift" method="post">
-            <input class="button-primary" type="submit" value="End">
+            <input class="button-primary" type="submit" value="End Shift">
         </form>
     </div>
     <div class="offset-by-one five columns">
@@ -23,12 +29,12 @@
         </form>
     </div>
 </div>
-
+{{/breakStarted}}
 
 
 {{/timeIn}}
 {{^timeIn}}
 <form action="/app/startShift" method="post">
-    <input class="button-primary" type="submit" value="Start">
+    <input class="button-primary" type="submit" value="Start Shift">
 </form>
 {{/timeIn}}
