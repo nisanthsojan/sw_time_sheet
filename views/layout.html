@@ -19,11 +19,13 @@
     <div class="container">
         <div class="row">
             <div class="two columns">
-                <h2>SW</h2>
+                <h2 class="navbar-heading">SW</h2>
             </div>
-            <div class="offset-by-one nine columns">
+            <div class="offset-by-one six columns">
                 <ul class="navbar-list">
                     {{#user}}
+                    <li class="navbar-item"><a class="navbar-link" href="/app">Punch</a></li>
+                    <li class="navbar-item"><a class="navbar-link" href="/list">List</a></li>
                     <li class="navbar-item"><a class="navbar-link" href="/logout">Logout</a></li>
                     {{/user}}
                     {{^user}}
@@ -32,6 +34,11 @@
                     {{/user}}
                 </ul>
             </div>
+            {{#user}}
+            <div class="three columns">
+                <p class="navbar-desc">You are : {{user.username}}</p>
+            </div>
+            {{/user}}
         </div>
     </div>
 </nav>

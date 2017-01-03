@@ -12,6 +12,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const flash = require('connect-flash');
 const _U = require('underscore');
 const MongoStore = require('connect-mongo')(session);
+const ensureLogin = require('connect-ensure-login');
 
 const debug = require('debug')('sw-time-sheet:app');
 
@@ -56,16 +57,21 @@ passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
-//
-
 let routes = {};
 
 routes.index = require('./routes/index');
 routes.app = require('./routes/app');
 
-app.use('/', routes.index);
-app.use(require('connect-ensure-login').ensureLoggedIn());
-app.use('/app', routes.app);
+app.use('/app', ensureLogin.ensureLoggedIn(), routes.app);
+app.get('/logout', function (req, res) {
+    req.logout();
+    req.session.destroy();
+    res.redirect('/');
+});
+app.get('/ping', function (req, res) {
+    res.status(200).send("pong!");
+});
+app.use('/', ensureLogin.ensureNotLoggedIn({redirectTo: '/app'}), routes.index);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

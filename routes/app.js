@@ -5,10 +5,11 @@ const debug = require('debug')('sw-time-sheet:routes:app');
 const TimeSheet = require('../models/time_sheet');
 const _U = require('underscore');
 const moment = require('moment');
+const TimeDisplayFormat = 'Do MMMM YYYY, HH:mm';
 
 router.get('/', function (req, res, next) {
     let timeNow = moment();
-    res.locals.dateTime = timeNow.format('MMMM Do YYYY, HH:mm:ss');
+    res.locals.dateTime = timeNow.format(TimeDisplayFormat);
 
     if (!_U.isUndefined(req.session.BreakStarted)) {
         res.locals.breakStarted = req.session.BreakStarted;
@@ -19,7 +20,7 @@ router.get('/', function (req, res, next) {
         let ts = req.session.TimeSheet;
 
         let timeIn = moment(ts.timeIn);
-        res.locals.timeIn = timeIn.format('MMMM Do YYYY, HH:mm:ss');
+        res.locals.timeIn = timeIn.format(TimeDisplayFormat);
 
         if (!_U.isEmpty(ts.breakStart)) {
 
@@ -30,7 +31,7 @@ router.get('/', function (req, res, next) {
                 let maxLength = ts.breakStart.length;
                 let breakHours = 0;
 
-                if (!_U.isUndefined(req.session.BreakStarted)) {
+                if (!_U.isUndefined(req.session.BreakStarted) && req.session.BreakStarted === true) {
                     maxLength = ts.breakEnd.length;
                     res.locals.workedHours = moment(_U.last(ts.breakStart)).diff(timeIn, 'minutes');
                 }
@@ -55,7 +56,7 @@ router.get('/', function (req, res, next) {
     //debug('usr',req.user);
 
 
-    res.locals.workedHours = (res.locals.workedHours / 60); // converting minutes to hours
+    res.locals.workedHours = (res.locals.workedHours / 60).toFixed(2); // converting minutes to hours
     res.render('app');
 });
 
