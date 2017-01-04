@@ -61,8 +61,10 @@ let routes = {};
 
 routes.index = require('./routes/index');
 routes.app = require('./routes/app');
+routes.list = require('./routes/list');
 
 app.use('/app', ensureLogin.ensureLoggedIn(), routes.app);
+app.use('/app/list', ensureLogin.ensureLoggedIn(), routes.list);
 app.get('/logout', function (req, res) {
     req.logout();
     req.session.destroy();
