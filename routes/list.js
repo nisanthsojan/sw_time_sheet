@@ -67,54 +67,6 @@ router.get('/', function (req, res, next) {
             res.render('list');
         });
 
-    /*TimeSheet.aggregate([
-     {
-     $match: {
-     userId: req.user._id,
-     timeIn: {
-     $gt: moment().startOf('month').toDate(), $lt: moment().endOf('month').toDate()
-     }
-     }
-     },
-     {
-     $group: {
-     _id: {month: {$month: '$timeIn'}, day: {$dayOfMonth: '$timeIn'}, year: {$year: '$timeIn'}},
-     punchSheet: {
-     $push: {
-     timeIn: '$timeIn',
-     timeOut: '$timeOut',
-     breakStart: '$breakStart',
-     breakEnd: '$breakEnd'
-     }
-     }
-     }
-     }
-     ], function (err, result) {
-     if (err) {
-     debug('err', err);
-     return;
-     }
-
-     res.locals.data = _U.map(result, function (d) {
-
-     let returnData = {
-     date: moment().year(d._id.year).month(d._id.month).date(d._id.day).format('Do MMMM YYYY')
-     };
-
-     let punchSheet = d.punchSheet;
-
-     debug('punchSheet', d._id);
-
-     return {
-     'date': moment(punchSheet.timeIn).format('Do MMMM YYYY'),
-     'timeIn': moment(punchSheet.timeIn).format(TimeDisplayFormat),
-     'timeOut': moment(punchSheet.timeOut).format(TimeDisplayFormat)
-     };
-     });
-
-     res.render('list');
-     });*/
-
 });
 
 module.exports = router;

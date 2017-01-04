@@ -9,7 +9,6 @@ const cookieSecret = 'somerandomsecretforcookieswithnumberslike4196andf';
 const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const flash = require('connect-flash');
 const _U = require('underscore');
 const MongoStore = require('connect-mongo')(session);
 const ensureLogin = require('connect-ensure-login');
@@ -42,7 +41,6 @@ app.use(session({
 }));
 
 app.use(passport.initialize());
-app.use(flash());
 app.use(passport.session());
 
 app.use((req, res, next) => {
@@ -63,7 +61,7 @@ routes.index = require('./routes/index');
 routes.app = require('./routes/app');
 routes.list = require('./routes/list');
 
-app.use('/app', ensureLogin.ensureLoggedIn(), routes.app);
+app.use('/app', ensureLogin.ensureLoggedIn({setReturnTo: false}), routes.app);
 app.use('/app/list', ensureLogin.ensureLoggedIn(), routes.list);
 app.get('/logout', function (req, res) {
     req.logout();
