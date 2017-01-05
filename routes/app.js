@@ -7,7 +7,44 @@ const _U = require('underscore');
 const moment = require('moment');
 const TimeDisplayFormat = 'Do MMMM YYYY, HH:mm';
 
-router.get('/', function (req, res, next) {
+function checkUserStarted(req, res, next) {
+
+    TimeSheet.findOne({
+        userId: req.user._id,
+        timeIn: {$ne: null},
+        timeOut: null
+    }, function (err, ts) {
+        if (err) {
+            return res.redirect('/app');
+        }
+
+        if (!_U.isNull(ts)) {
+
+            if (!_U.isEmpty(ts.breakStart)) {
+
+                req.session.BreakStarted = true;
+
+                if (!_U.isEmpty(ts.breakEnd)) {
+
+                    if (ts.breakStart.length === ts.breakEnd.length) {
+                        req.session.BreakStarted = false;
+                    }
+
+                }
+            }
+
+            req.session.TimeSheet = ts;
+        }
+
+        next();
+
+
+    });
+
+
+}
+
+router.get('/', checkUserStarted, function (req, res, next) {
     let timeNow = moment();
     res.locals.dateTime = timeNow.format(TimeDisplayFormat);
 
