@@ -90,7 +90,6 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
                 }
 
 
-
                 return returnData;
             });
 
