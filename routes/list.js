@@ -86,7 +86,7 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
 
                     returnData.workedHours = ((totalLoggedIn - totalBreakHours) / 60).toFixed(2);
 
-                    res.locals.totalHoursWorked += returnData.workedHours;
+                    res.locals.totalHoursWorked += parseFloat(returnData.workedHours);
                 }
 
 
