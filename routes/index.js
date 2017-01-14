@@ -2,6 +2,8 @@ const express = require('express');
 const passport = require('passport');
 const Account = require('../models/account');
 const router = express.Router();
+const debug = require('debug')('sw-time-sheet:routes:index');
+
 
 router.get('/', function (req, res, next) {
     res.render('index');
@@ -33,7 +35,11 @@ router.get('/login', function (req, res) {
 });
 
 router.post('/login', passport.authenticate('local'), function (req, res) {
+    debug('asdasdasd');
     res.redirect('/app');
 });
 
 module.exports = router;
+
+
+//@TODO passport login auth error page..

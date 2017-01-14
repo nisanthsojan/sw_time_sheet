@@ -1,4 +1,16 @@
 <p>Time now {{dateTime}}</p>
+<p>Showing week starting on {{weekStartDisplay}}</p>
+
+<div class="row">
+    <div class="five columns">
+        <a class="button" href="{{baseUrl}}?week_start={{weekStart}}">Previous week</a>
+    </div>
+    {{#nextWeek}}
+    <div class="offset-by-two five columns">
+        <a class="button u-pull-right" href="{{baseUrl}}?week_start={{nextWeek}}">Next week</a>
+    </div>
+    {{/nextWeek}}
+</div>
 
 <table class="u-full-width">
     <thead>

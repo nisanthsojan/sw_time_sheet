@@ -7,16 +7,40 @@ const _U = require('underscore');
 const moment = require('moment');
 const TimeDisplayFormat = 'Do MMMM YYYY, HH:mm';
 
-router.get('/', function (req, res, next) {
+function buildBaseUrl(req, res, next) {
+    res.locals.baseUrl = req.originalUrl.split("?").shift();
+    next();
+}
 
-    let timeNow = moment();
-    res.locals.dateTime = timeNow.format(TimeDisplayFormat);
+function buildWeeklyHeaders(req, res, next) {
+    if (!_U.isUndefined(req.query.week_start)) {
+        res.locals.weekStart = moment(req.query.week_start).startOf('isoweek').subtract(7, 'days').toISOString();
+        req.queryTime = moment(req.query.week_start).startOf('isoweek');
+    } else {
+        res.locals.weekStart = moment().startOf('isoweek').subtract(7, 'days').toISOString();
+        req.queryTime = moment().startOf('isoweek');
+    }
+
+    if (!req.queryTime.clone().isAfter(moment().startOf('isoweek')) && !req.queryTime.clone().isSame(moment().startOf('isoweek'))) {
+        res.locals.nextWeek = req.queryTime.clone().add(7, 'days').toISOString();
+    }
+
+    res.locals.weekStartDisplay = req.queryTime.clone().format(TimeDisplayFormat);
+
+    next();
+}
+
+router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
+
+    res.locals.dateTime = moment().format(TimeDisplayFormat);
+
+    // debug('now',req.queryTime.clone().toDate());
 
     TimeSheet
         .find({
             userId: req.user._id,
             timeIn: {
-                $gt: moment().startOf('month').toDate(), $lt: moment().endOf('month').toDate()
+                $gt: req.queryTime.clone().toDate(), $lt: req.queryTime.clone().endOf('isoweek').toDate()
             }
         })
         .select({
