@@ -94,6 +94,8 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
                 return returnData;
             });
 
+            res.locals.totalHoursWorked = res.locals.totalHoursWorked.toFixed(2);
+
             res.render('list');
         });
 
