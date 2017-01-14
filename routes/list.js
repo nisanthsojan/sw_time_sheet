@@ -52,6 +52,8 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
         .sort({timeIn: -1})
         .exec(function (err, data) {
 
+            res.locals.totalHoursWorked = 0;
+
             res.locals.data = _U.map(data, function (d) {
 
                 //debug('punchSheet', d);
@@ -83,7 +85,11 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
                     //debug('totalBreakHours', totalBreakHours);
 
                     returnData.workedHours = ((totalLoggedIn - totalBreakHours) / 60).toFixed(2);
+
+                    res.locals.totalHoursWorked += returnData.workedHours;
                 }
+
+
 
                 return returnData;
             });
