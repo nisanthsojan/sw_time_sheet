@@ -34,12 +34,10 @@ router.get('/login', function (req, res) {
     res.render('login');
 });
 
-router.post('/login', passport.authenticate('local'), function (req, res) {
-    debug('asdasdasd');
-    res.redirect('/app');
-});
+router.post('/login', passport.authenticate('local', {
+    successRedirect : '/app', // redirect to the secure profile section
+    failureRedirect : '/login', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+}));
 
 module.exports = router;
-
-
-//@TODO passport login auth error page..

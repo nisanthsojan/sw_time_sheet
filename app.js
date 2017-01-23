@@ -12,6 +12,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const _U = require('underscore');
 const MongoStore = require('connect-mongo')(session);
 const ensureLogin = require('connect-ensure-login');
+const flash = require('connect-flash');
 
 const debug = require('debug')('sw-time-sheet:app');
 
@@ -42,6 +43,14 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
+
+// passport config
+const Account = require('./models/account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
 
 app.use((req, res, next) => {
     res.locals.title = 'SW Time Sheet';
@@ -49,11 +58,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// passport config
-const Account = require('./models/account');
-passport.use(new LocalStrategy(Account.authenticate()));
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
+app.use((req, res, next) => {
+    debug('flash', req.flash());
+    next();
+});
 
 let routes = {};
 

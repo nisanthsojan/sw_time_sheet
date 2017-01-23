@@ -3,6 +3,7 @@ const router = express.Router();
 const debug = require('debug')('sw-time-sheet:routes:list');
 
 const TimeSheet = require('../models/time_sheet');
+const appUtils = require('../lib/utils');
 const _U = require('underscore');
 const moment = require('moment');
 const TimeDisplayFormat = 'Do MMMM YYYY, HH:mm';
@@ -84,16 +85,15 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
 
                     //debug('totalBreakHours', totalBreakHours);
 
-                    returnData.workedHours = ((totalLoggedIn - totalBreakHours) / 60).toFixed(2);
-
-                    res.locals.totalHoursWorked += parseFloat(returnData.workedHours);
+                    returnData.workedHours = appUtils.humaniseTime(totalLoggedIn - totalBreakHours);
+                    res.locals.totalHoursWorked += totalLoggedIn - totalBreakHours;
                 }
 
 
                 return returnData;
             });
 
-            res.locals.totalHoursWorked = res.locals.totalHoursWorked.toFixed(2);
+            res.locals.totalHoursWorked = appUtils.humaniseTime(res.locals.totalHoursWorked);
 
             res.render('list');
         });

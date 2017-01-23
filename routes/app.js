@@ -5,6 +5,7 @@ const debug = require('debug')('sw-time-sheet:routes:app');
 const TimeSheet = require('../models/time_sheet');
 const _U = require('underscore');
 const moment = require('moment');
+const appUtils = require('../lib/utils');
 const TimeDisplayFormat = 'Do MMMM YYYY, HH:mm';
 
 function checkUserStarted(req, res, next) {
@@ -92,8 +93,8 @@ router.get('/', checkUserStarted, function (req, res, next) {
 
     //debug('usr',req.user);
 
+    res.locals.workedHours = appUtils.humaniseTime(res.locals.workedHours);
 
-    res.locals.workedHours = (res.locals.workedHours / 60).toFixed(2); // converting minutes to hours
     res.render('app');
 });
 
