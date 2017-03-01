@@ -33,12 +33,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser(cookieSecret));
 app.use(express.static(path.join(__dirname, 'public')));
+
+const sessionTtl = 24 * 60 * 60;
+
 app.use(session({
     secret: cookieSecret,
     resave: false,
     saveUninitialized: true,
-    //cookie: {secure: true},
-    store: new MongoStore({mongooseConnection: mongoose.connection})
+    cookie: {maxAge: sessionTtl * 1000},
+    store: new MongoStore({
+        mongooseConnection: mongoose.connection,
+        ttl: sessionTtl,
+        autoRemoveInterval: 5 * 60
+    })
 }));
 
 app.use(passport.initialize());
