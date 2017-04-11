@@ -6,7 +6,7 @@ const TimeSheet = require('../models/time_sheet');
 const appUtils = require('../lib/utils');
 const _U = require('underscore');
 const moment = require('moment');
-const TimeDisplayFormat = 'Do MMMM YYYY, HH:mm';
+const TimeDisplayFormat = 'D MMMM YYYY, HH:mm';
 
 function buildBaseUrl(req, res, next) {
     res.locals.baseUrl = req.originalUrl.split("?").shift();
@@ -61,7 +61,7 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
                 //debug('punchSheet', d);
 
                 let returnData = {
-                    date: moment(d.timeIn).format('Do MMMM YYYY'),
+                    date: moment(d.timeIn).format(TimeDisplayFormat),
                     timeIn: moment(d.timeIn).tz(req.session.userTimeZone).format(TimeDisplayFormat)
                 };
 
@@ -87,6 +87,7 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
                     //debug('totalBreakHours', totalBreakHours);
 
                     returnData.workedHours = appUtils.humaniseTime(totalLoggedIn - totalBreakHours);
+                    returnData.breakHours = appUtils.humaniseTime(totalBreakHours);
                     res.locals.totalHoursWorked += totalLoggedIn - totalBreakHours;
                 }
 

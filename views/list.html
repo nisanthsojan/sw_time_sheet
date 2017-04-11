@@ -1,4 +1,4 @@
-<p>Time now {{dateTime}}</p>
+<p>Time now {{dateTime}} {{userTimeZone}}</p>
 <p>Showing week ending on {{weekEndDisplay}}</p>
 
 <div class="row">
@@ -16,9 +16,10 @@
     <thead>
     <tr>
         <th>Date</th>
-        <th>Time in</th>
-        <th>Time out</th>
-        <th>Hours</th>
+        <th>Login</th>
+        <th>Logout</th>
+        <th>Worked (Hours)</th>
+        <th>Break (Hours)</th>
     </tr>
     </thead>
     <tbody>
@@ -28,6 +29,7 @@
         <td>{{timeIn}}</td>
         <td>{{timeOut}}</td>
         <td>{{workedHours}}</td>
+        <td>{{breakHours}}</td>
     </tr>
     {{/data}}
     <tr>
