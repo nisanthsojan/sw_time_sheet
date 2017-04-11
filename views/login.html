@@ -2,6 +2,9 @@
 
     <h4 class="section-heading">Login</h4>
     <form action="/login" method="post">
+        <label for="emailInput">Your timezone</label>
+        <input class="u-full-width" type="text" name="timezone" readonly id="timezoneInput">
+
         <label for="emailInput">Your email</label>
         <input class="u-full-width" type="email" placeholder="test@mailbox.com" id="emailInput" name="username">
 
@@ -13,3 +16,10 @@
     </form>
 
 </div>
+
+<script type="application/javascript" src="javascripts/jstz.min.js"></script>
+<script type="application/javascript">
+    window.onload = function () {
+        document.getElementById('timezoneInput').value = jstz.determine().name();
+    };
+</script>

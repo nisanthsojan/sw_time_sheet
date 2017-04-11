@@ -4,6 +4,8 @@ const Account = require('../models/account');
 const router = express.Router();
 const debug = require('debug')('sw-time-sheet:routes:index');
 
+const moment = require('moment-timezone');
+
 
 router.get('/', function (req, res, next) {
     res.render('index');
@@ -34,10 +36,16 @@ router.get('/login', function (req, res) {
     res.render('login');
 });
 
-router.post('/login', passport.authenticate('local', {
-    successRedirect : '/app', // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+router.post('/login', function (req, res, next) {
+
+    debug('moment',req.body.timezone);
+
+    req.session.userTimeZone = req.body.timezone;
+    next();
+}, passport.authenticate('local', {
+    successRedirect: '/app', // redirect to the secure profile section
+    failureRedirect: '/login', // redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
 }));
 
 module.exports = router;

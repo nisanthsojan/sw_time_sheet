@@ -26,14 +26,15 @@ function buildWeeklyHeaders(req, res, next) {
         res.locals.nextWeek = req.queryTime.clone().add(7, 'days').toISOString();
     }
 
-    res.locals.weekStartDisplay = req.queryTime.clone().format(TimeDisplayFormat);
+    res.locals.weekEndDisplay = req.queryTime.clone().add(6, 'days').format(TimeDisplayFormat);
 
     next();
 }
 
 router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
 
-    res.locals.dateTime = moment().format(TimeDisplayFormat);
+    res.locals.dateTime = moment().tz(req.session.userTimeZone).format(TimeDisplayFormat);
+    res.locals.userTimeZone = req.session.userTimeZone;
 
     // debug('now',req.queryTime.clone().toDate());
 
@@ -61,11 +62,11 @@ router.get('/', buildBaseUrl, buildWeeklyHeaders, function (req, res, next) {
 
                 let returnData = {
                     date: moment(d.timeIn).format('Do MMMM YYYY'),
-                    timeIn: moment(d.timeIn).format(TimeDisplayFormat)
+                    timeIn: moment(d.timeIn).tz(req.session.userTimeZone).format(TimeDisplayFormat)
                 };
 
                 if (!_U.isUndefined(d.timeOut)) {
-                    returnData.timeOut = moment(d.timeOut).format(TimeDisplayFormat);
+                    returnData.timeOut = moment(d.timeOut).tz(req.session.userTimeZone).format(TimeDisplayFormat);
 
                     let totalLoggedIn = moment(d.timeOut).diff(moment(d.timeIn), 'minutes');
                     //debug('totalLoggedIn', totalLoggedIn);

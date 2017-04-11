@@ -13,6 +13,7 @@ const _U = require('underscore');
 const MongoStore = require('connect-mongo')(session);
 const ensureLogin = require('connect-ensure-login');
 const flash = require('connect-flash');
+const compression = require('compression');
 
 const debug = require('debug')('sw-time-sheet:app');
 
@@ -27,6 +28,7 @@ app.set('view engine', 'html');
 app.set('layout', 'layout');
 app.engine('html', require('hogan-express'));
 
+app.use(compression());
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());

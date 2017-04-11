@@ -1,6 +1,6 @@
 {
   "name": "sw-time-sheet",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "body-parser": "~1.15.2",
+    "compression": "^1.6.2",
     "connect-ensure-login": "^0.1.1",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^1.3.2",
@@ -17,6 +18,7 @@
     "express-session": "^1.14.2",
     "hogan-express": "^0.5.2",
     "moment": "^2.17.1",
+    "moment-timezone": "^0.5.13",
     "mongoose": "^4.7.5",
     "morgan": "~1.7.0",
     "passport": "^0.3.2",

@@ -47,7 +47,8 @@ function checkUserStarted(req, res, next) {
 
 router.get('/', checkUserStarted, function (req, res, next) {
     let timeNow = moment();
-    res.locals.dateTime = timeNow.format(TimeDisplayFormat);
+    res.locals.dateTime = timeNow.tz(req.session.userTimeZone).format(TimeDisplayFormat);
+    res.locals.userTimeZone = req.session.userTimeZone;
 
     if (!_U.isUndefined(req.session.BreakStarted)) {
         res.locals.breakStarted = req.session.BreakStarted;
@@ -58,7 +59,7 @@ router.get('/', checkUserStarted, function (req, res, next) {
         let ts = req.session.TimeSheet;
 
         let timeIn = moment(ts.timeIn);
-        res.locals.timeIn = timeIn.format(TimeDisplayFormat);
+        res.locals.timeIn = timeIn.tz(req.session.userTimeZone).format(TimeDisplayFormat);
 
         if (!_U.isEmpty(ts.breakStart)) {
 
